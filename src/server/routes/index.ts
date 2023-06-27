@@ -1,14 +1,14 @@
 import { Router } from 'express';
 
+import {CidadesController} from './../controllers'
+
+
 const router = Router();
 
 router.get('/',function(request,response) {
-    return response.json({message: 'ola'});
+    return response.json({message: 'ola tudo ok'});
 });
 
-router.post('/teste',function(request,response) {
-    console.log(request.body);
-    return response.json({message: 'ola'});
-});
+router.post('/cidades',CidadesController.create);
 
 export{router};
