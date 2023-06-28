@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Request, Response } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import * as yup from 'yup';
 
 interface ICidade{
@@ -11,13 +11,12 @@ const bodyValidation:yup.Schema<ICidade> = yup.object().shape({
     nome:yup.string().required().min(3),
     estado:yup.string().required().min(3),
 });
-// 
-export const create = async (req: Request<{},{},ICidade>,res: Response)=>{
-    let validateData: ICidade | undefined = undefined;
-   
+
+
+export const createBodyValidator : RequestHandler = async(req,res,next)=>{
     try{
-        validateData = await bodyValidation.validate(req.body,{abortEarly:false});
-       
+        await bodyValidation.validate(req.body,{abortEarly:false});
+        return next();
     }catch(error){
         const yupError = error as yup.ValidationError;
         const validationErrors: Record<string,string> = {};
@@ -28,8 +27,10 @@ export const create = async (req: Request<{},{},ICidade>,res: Response)=>{
         });
 
         return res.status(400).json({errors:validationErrors});
-        console.log(validateData);
     }
+};
 
+
+export const create = async (req: Request<{},{},ICidade>,res: Response)=>{
     return res.send('Create');
 };
